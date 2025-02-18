@@ -252,5 +252,6 @@ docker ps
 - Check logs (api-gateway-app, inventory-app ...; container_name from docker-compose.yml)
 ```powershall
 docker-compose logs api-gateway-app
+docker-compose logs billing-app > billing-app.log
 ```
 

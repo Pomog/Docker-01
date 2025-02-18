@@ -3,7 +3,6 @@ from app import create_app
 
 import os
 
-
 PORT = os.getenv("APP_PORT")
 
 app = create_app()

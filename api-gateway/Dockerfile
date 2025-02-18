@@ -8,4 +8,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+ENV APP_PORT=3000
+
 CMD ["python", "server.py"]
