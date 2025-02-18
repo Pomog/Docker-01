@@ -230,4 +230,27 @@ EXPOSE 5672
 ## inventory-app, billing-app, api-gateway are Provided
 
 ## 6. Build and Run with Docker Compose
+- Build
+```powershall
+docker-compose build
+```
+![image](https://github.com/Pomog/Docker-01/edit/main/build.png)
+
+- Check
+```powershall
+docker images
+```
+![image](https://github.com/Pomog/Docker-01/edit/main/images.png)
+- Start
+```powerwshall
+docker-compose up -d
+```
+- Check
+```powershall
+docker ps
+```
+- Check logs (api-gateway-app, inventory-app ...; container_name from docker-compose.yml)
+```powershall
+docker-compose logs api-gateway-app
+```
 
