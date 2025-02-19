@@ -234,13 +234,14 @@ EXPOSE 5672
 ```powershall
 docker-compose build
 ```
-![image](https://github.com/Pomog/Docker-01/edit/main/build.png)
+![image](https://github.com/Pomog/Docker-01/blob/main/build.png)
+
 
 - Check
 ```powershall
 docker images
 ```
-![image](https://github.com/Pomog/Docker-01/edit/main/images.png)
+![image](https://github.com/Pomog/Docker-01/blob/main/images.png)
 - Start
 ```powerwshall
 docker-compose up -d
