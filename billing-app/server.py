@@ -4,15 +4,20 @@ from app.consume_queue import consume_and_store_order
 from app.orders import Base
 
 if __name__ == "__main__":
-    BILLING_DB_USER = os.getenv("BILLING_DB_USER", "default_user")
-    BILLING_DB_PASSWORD = os.getenv("BILLING_DB_PASSWORD", "default_password")
-    BILLING_DB_NAME = os.getenv("BILLING_DB_NAME", "billing_db")
-    BILLING_DB_HOST = os.getenv("BILLING_DB_HOST", "localhost")
-    BILLING_DB_PORT = os.getenv("BILLING_DB_PORT", "5432")
+    # 1) Read environment variables
+		db_host = os.getenv("DB_HOST")
+		db_port = os.getenv("DB_PORT")
+		db_user = os.getenv("DB_USER")
+		db_password = os.getenv("DB_PASS")
+		db_name = os.getenv("DB_NAME")
 
-    DB_URI = f"postgresql://{BILLING_DB_USER}:{BILLING_DB_PASSWORD}@{BILLING_DB_HOST}:{BILLING_DB_PORT}/{BILLING_DB_NAME}"
 
+    # 2) Construct the DB URI with the Docker service name, not localhost
+    DB_URI = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+
+    # 3) Create the engine
     engine = create_engine(DB_URI)
-    Base.metadata.create_all(engine)
 
+    # 4) Create tables, consume queue, etc.
+    Base.metadata.create_all(engine)
     consume_and_store_order(engine)

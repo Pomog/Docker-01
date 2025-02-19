@@ -29,8 +29,7 @@ services:
         environment:
             POSTGRES_USER: "${POSTGRES_USER}"
             POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-            # Optional if you want a custom DB name:
-            # POSTGRES_DB: "billing_db"
+            POSTGRES_DB: "billing_db"
         ports:
             - "5434:5432"
         volumes:
@@ -65,13 +64,12 @@ services:
         ports:
             - "8081:8080"
         environment:
-            APP_PORT: "8080" # The port your Python app will listen on
-            DB_HOST: "inventory-db" # Connect to the 'inventory-db' container by service name
-            DB_PORT: "5432" # Internal Postgres port
-            DB_USER: "${POSTGRES_USER}"
-            DB_PASS: "${POSTGRES_PASSWORD}"
-            # If your code needs a DB name, add:
-            # DB_NAME: "inventory_db"
+            APP_PORT: "8080"
+            INVENTORY_DB_USER: "inventory_admin"
+            INVENTORY_DB_PASSWORD: "someSecurePass"
+            INVENTORY_DB_HOST: "inventory-db"   # The container name for the DB
+            INVENTORY_DB_PORT: "5432"
+            INVENTORY_DB_NAME: "inventory_db"   # optional, or match your DB
         networks:
             - app-network
         restart: unless-stopped
@@ -86,19 +84,23 @@ services:
             - billing-db
             - rabbit-queue
         ports:
-            - "8082:8080"
+            - "8082:8080"   # if it even needs an HTTP port
         environment:
-            APP_PORT: "8080" # The port your Python app will listen on
-            DB_HOST: "billing-db" # Connect to the 'billing-db' container
+            APP_PORT: "8080"
+            DB_HOST: "billing-db"
             DB_PORT: "5432"
-            DB_USER: "${POSTGRES_USER}"
-            DB_PASS: "${POSTGRES_PASSWORD}"
-            # If your code needs a DB name, add:
-            # DB_NAME: "billing_db"
+            DB_USER: "inventory_admin"    # or separate user if you prefer
+            DB_PASS: "someSecurePass"
+            DB_NAME: "billing_db"
             RABBITMQ_HOST: "rabbit-queue"
+            RABBITMQ_PORT: "5672"
+            RABBITMQ_USER: "rmqadmin"
+            RABBITMQ_PASSWORD: "anotherSecurePass"
+            RABBITMQ_QUEUE: "billing_queue"
         networks:
             - app-network
         restart: unless-stopped
+
 
     # 6) API-GATEWAY
     api-gateway-app:
@@ -108,11 +110,19 @@ services:
         container_name: api-gateway-app
         ports:
             - "3000:3000"
-        volumes:
-            - api-gateway-volume:/var/logs/api-gateway
+        environment:
+            APP_PORT: "3000"
+            INVENTORY_APP_HOST: "inventory-app"  # so the proxy can route to 'inventory-app'
+            INVENTORY_APP_PORT: "8080"
+            RABBITMQ_HOST: "rabbit-queue"
+            RABBITMQ_PORT: "5672"
+            RABBITMQ_USER: "rmqadmin"
+            RABBITMQ_PASSWORD: "anotherSecurePass"
+            RABBITMQ_QUEUE: "billing_queue"
         networks:
             - app-network
         restart: unless-stopped
+
 
 volumes:
     inventory-db-volume:
